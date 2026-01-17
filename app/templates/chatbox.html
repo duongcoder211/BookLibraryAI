@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Главная страница с AI Чат-ботом</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Главная страница с AI Чат-ботом</h1>
+            <p class="subtitle">Опыт общения с умным AI чат-ботом, который может отвечать на вопросы и помогать вам 24/7</p>
+        </header>
+
+        <div class="content">
+            <div class="card">
+                <h2>О AI Чат-боте</h2>
+                <p>Наш AI чат-бот использует передовые технологии машинного обучения для понимания и ответов на ваши вопросы. Он может помочь в различных областях.</p>
+                <ul class="features">
+                    <li><i class="fas fa-check-circle"></i> Быстрые ответы</li>
+                    <li><i class="fas fa-check-circle"></i> Поддержка 24/7</li>
+                    <li><i class="fas fa-check-circle"></i> Разнообразные темы</li>
+                    <li><i class="fas fa-check-circle"></i> Естественный язык</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h2>Инструкция по использованию</h2>
+                <p>Нажмите на кнопку с роботом AI в правом нижнем углу, чтобы открыть чат-бот. Вы можете задать вопросы на любые темы и получить ответы от AI.</p>
+                <ul class="features">
+                    <li><i class="fas fa-robot"></i> Нажмите кнопку робота для открытия/закрытия чата</li>
+                    <li><i class="fas fa-keyboard"></i> Введите свой вопрос в текстовое поле</li>
+                    <li><i class="fas fa-paper-plane"></i> Нажмите кнопку отправки или Enter</li>
+                    <li><i class="fas fa-times-circle"></i> Нажмите X, чтобы закрыть чат</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h2>Основные функции</h2>
+                <p>Наш AI чат-бот может помочь вам с различными задачами, от ответов на вопросы до инструкций по использованию.</p>
+                <ul class="features">
+                    <li><i class="fas fa-question-circle"></i> Ответы на часто задаваемые вопросы</li>
+                    <li><i class="fas fa-lightbulb"></i> Консультации и рекомендации</li>
+                    <li><i class="fas fa-code"></i> Поддержка программирования</li>
+                    <li><i class="fas fa-language"></i> Помощь с переводом</li>
+                </ul>
+            </div>
+        </div>
+
+        <footer>
+            <p>© 2023 Главная страница с AI Чат-ботом. Все права защищены.</p>
+            <p>Нажмите на кнопку AI робота в правом нижнем углу, чтобы начать общение</p>
+        </footer>
+    </div>
+
+    <!-- Кнопка чат-бота -->
+    <div class="chatbot-button" id="chatbotButton">
+        <i class="fas fa-robot"></i>
+    </div>
+
+    <!-- Контейнер чат-бота -->
+    <div class="chatbot-container" id="chatbotContainer">
+        <div class="chat-header">
+            <h3><i class="fas fa-robot"></i> Чат с AI</h3>
+            <button class="close-btn" id="closeBtn">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="chat-body" id="chatBody">
+            <!-- Сообщения будут добавлены сюда -->
+            <div class="message bot">
+                <div class="message-content">
+                    Привет! Я AI ассистент. Чем я могу помочь вам сегодня?
+                </div>
+                <div class="message-time">10:00</div>
+            </div>
+        </div>
+
+        <div class="chat-footer">
+            <input type="text" class="chat-input" id="chatInput" placeholder="Введите ваш вопрос...">
+            <button class="send-btn" id="sendBtn">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // DOM элементы
+        const chatbotButton = document.getElementById('chatbotButton');
+        const chatbotContainer = document.getElementById('chatbotContainer');
+        const closeBtn = document.getElementById('closeBtn');
+        const chatBody = document.getElementById('chatBody');
+        const chatInput = document.getElementById('chatInput');
+        const sendBtn = document.getElementById('sendBtn');
+
+        // Переключение видимости чат-бота
+        chatbotButton.addEventListener('click', () => {
+            chatbotContainer.classList.toggle('active');
+        });
+
+        // Закрытие чат-бота
+        closeBtn.addEventListener('click', () => {
+            chatbotContainer.classList.remove('active');
+        });
+
+        // Отправка сообщения
+        function sendMessage() {
+            const messageText = chatInput.value.trim();
+            
+            if (!messageText) return;
+            
+            // Добавляем сообщение пользователя
+            addMessage(messageText, 'user');
+            chatInput.value = '';
+            
+            // Показываем скелетон загрузки
+            addSkeletonLoading();
+            
+            // Имитируем ответ от AI через некоторое время
+            setTimeout(() => {
+                // Удаляем скелетон загрузки
+                removeSkeletonLoading();
+                
+                // Добавляем ответ от AI
+                const aiResponse = getAIResponse(messageText);
+                addMessage(aiResponse, 'bot');
+                
+                // Прокручиваем вниз
+                scrollToBottom();
+            }, 1500 + Math.random() * 2000); // Случайное время ответа от 1.5 до 3.5 секунд
+        }
+
+        // Отправка сообщения при нажатии кнопки отправки
+        sendBtn.addEventListener('click', sendMessage);
+
+        // Отправка сообщения при нажатии Enter
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Добавление сообщения в чат
+        function addMessage(text, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            
+            const messageContent = document.createElement('div');
+            messageContent.className = 'message-content';
+            messageContent.textContent = text;
+            
+            const messageTime = document.createElement('div');
+            messageTime.className = 'message-time';
+            messageTime.textContent = getCurrentTime();
+            
+            messageDiv.appendChild(messageContent);
+            messageDiv.appendChild(messageTime);
+            
+            chatBody.appendChild(messageDiv);
+            
+            // Прокручиваем вниз
+            scrollToBottom();
+        }
+
+        // Добавление скелетона загрузки
+        function addSkeletonLoading() {
+            const skeletonDiv = document.createElement('div');
+            skeletonDiv.className = 'skeleton-loading';
+            skeletonDiv.id = 'skeletonLoading';
+            skeletonDiv.textContent = 'Скоро будет готов ...';
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message bot';
+            messageDiv.appendChild(skeletonDiv);
+            
+            chatBody.appendChild(messageDiv);
+            
+            // Прокручиваем вниз
+            scrollToBottom();
+        }
+
+        // Удаление скелетона загрузки
+        function removeSkeletonLoading() {
+            const skeleton = document.getElementById('skeletonLoading');
+            if (skeleton) {
+                skeleton.parentElement.remove();
+            }
+        }
+
+        // Получение текущего времени в формате ЧЧ:ММ
+        function getCurrentTime() {
+            const now = new Date();
+            return `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+        }
+
+        // Прокрутка вниз чата
+        function scrollToBottom() {
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+
+        // Получение ответа от AI на основе сообщения
+        function getAIResponse(userMessage) {
+            const message = userMessage.toLowerCase();
+            const responses = [
+                "Я - AI, разработанный для помощи и ответов на вопросы. На основе вашего вопроса я могу предоставить более подробную информацию, если вы уточните запрос.",
+                "Это интересный вопрос! Я могу помочь вам узнать больше на эту тему. Хотите, чтобы я объяснил подробнее?",
+                "Я понимаю ваш вопрос. На основе текущих знаний я могу предоставить следующую информацию: современный AI обладает способностями обработки естественного языка, машинного обучения и поддержки в различных областях.",
+                "Спасибо за ваш вопрос! Позвольте мне проанализировать и дать наиболее подходящий ответ. Технологии AI быстро развиваются и имеют множество практических применений.",
+                "Я обработал ваш вопрос. Результаты анализа показывают, что это популярная тема. Хотите, чтобы я привел конкретные примеры или объяснил подробнее?",
+                "Основываясь на вашем запросе, я предлагаю несколько решений: 1) Узнать больше информации из проверенных источников, 2) Проконсультироваться со специалистами, 3) Использовать существующие инструменты поддержки AI."
+            ];
+            
+            // Проверка ключевых слов для подходящего ответа
+            if (message.includes("привет") || message.includes("здравствуйте") || message.includes("здравствуй")) {
+                return "Привет! Рад общению с вами. У вас есть вопросы, на которые я могу ответить?";
+            } else if (message.includes("спасибо") || message.includes("благодарю")) {
+                return "Пожалуйста! Я всегда готов помочь. Если у вас есть дополнительные вопросы, не стесняйтесь спрашивать!";
+            } else if (message.includes("как дела") || message.includes("как ты")) {
+                return "У меня все отлично, я готов помогать вам! А как ваши дела?";
+            } else if (message.includes("что такое ии") || message.includes("что такое ai") || message.includes("искусственный интеллект")) {
+                return "Искусственный интеллект (ИИ) — это область компьютерных наук, которая занимается созданием систем, способных выполнять задачи, обычно требующие человеческого интеллекта, такие как распознавание изображений, обработка естественного языка и принятие решений.";
+            } else if (message.includes("время") || message.includes("который час")) {
+                return `Сейчас ${getCurrentTime()}. Время ответа зависит от сложности вопроса и нагрузки на систему.`;
+            } else if (message.includes("помощь") || message.includes("help")) {
+                return "Я могу помочь с различными вопросами: объяснить концепции, помочь с кодом, ответить на общие вопросы, перевести текст и многое другое. Что вас интересует?";
+            } else if (message.includes("погода")) {
+                return "К сожалению, у меня нет доступа к актуальным данным о погоде. Рекомендую проверить специализированные сервисы погоды.";
+            } else {
+                // Возвращаем случайный ответ из списка
+                return responses[Math.floor(Math.random() * responses.length)];
+            }
+        }
+
+        // Добавление нескольких примеров сообщений при загрузке страницы
+        window.addEventListener('DOMContentLoaded', () => {
+            // Приветственное сообщение уже есть в HTML
+            // Добавляем еще одно сообщение для демонстрации
+            setTimeout(() => {
+                addMessage("Вы можете задать мне вопросы на любые темы. Я могу помочь с вопросами о технологиях, обучении или просто пообщаться!", 'bot');
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

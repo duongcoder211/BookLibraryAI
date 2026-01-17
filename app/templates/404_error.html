@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}
+    <title>Page not found</title>
+{% endblock %}
+
+{% block content %}
+    <div class="wrapper" style="margin: 0 auto; text-align: center; width: fit-content;">
+        <div id="404_image">
+            <img src="{{ url_for("static", filename = "imgs/Error-404-Page-Not-Found.png") }}" draggable="false" alt="404_image">
+        </div>
+        <div>
+            <a href="/">Back to home page</a>
+        </div>
+    </div>
+{% endblock %}

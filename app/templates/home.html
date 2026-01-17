@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}
+    <title>Home</title>
+{% endblock %}
+
+{% block content %}
+    <table style="width: 98vw; margin: 0 auto;">
+        <tr class="text-center table-head">
+            <th style="width: 100px;">User</th>
+            <th style="width: 200px;">Subcribed book quantity</th>
+            <th>Book name</th>
+            <th>Reading status</th>
+        </tr>
+
+        {% for user in users %}
+        <tr class={{ loop.cycle('even', 'odd') }}>
+            <td>{{user.name}}</td>
+
+            <!-- filter jinja2 (|) -->
+            <td style="text-align: center;">
+                {% if active_user_id == user.id %}
+                    <a href="/user/{{active_user_id}}/archive">{{user.user_books|length()}}</a>
+                {% else %}
+                    <span>{{user.user_books|length()}}</span>
+                {% endif %}
+            </td>
+            
+            <td>
+                {% for ub in user.user_books %} 
+                    <ul type="none" style="text-align: left;">
+                        <li>{{ub.book.name}}</li>
+                    </ul>
+                {% endfor %}
+            </td>
+
+            <td>
+                {% for ub in user.user_books %} 
+                    <ul type="none">
+                        <li>{{ub.reading_status}}</li>
+                    </ul>
+                {% endfor %}
+            </td>
+
+            <td>{{user.username}}</td>
+            <td>{{user.password}}</td>
+        </tr>
+        {% endfor %}
+    </table>    
+{% endblock %}

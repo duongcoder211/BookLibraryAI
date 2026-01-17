@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}
+    <title>Edit</title>
+{% endblock %}
+
+{% block content %}
+    <form action="/user/{{user.id}}/update" method="POST" class="text-center">
+        <h3>Modify user information</h3>
+        <label for="name">User name</label><br>
+        <input type="text" name="name" value="{{user.name}}" id="name" required><br>
+        <label for="email">Email</label><br>
+        <input type="text" name="email" value="{{user.email}}" id="email" required><br>
+        <input type="submit" value="Submit">
+
+        <!-- <table>
+            <tr>
+                <th>
+                    <label for="name">User name</label>
+                </th>
+                <th>
+                    <label for="email">Email</label>
+                </th>
+            </tr>
+
+            <tr>
+                <td>
+                    <input type="text" name="name" value="{{user.name}}" id="name" required>
+                </td>
+                <td>
+                    <input type="text" name="email" value="{{user.email}}" id="email" required>
+                </td>
+                <td>
+                    <input type="submit" value="Submit">
+                </td>
+            </tr>
+        </table> -->
+        
+    </form>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}
+    <title>Books</title>
+{% endblock %}
+
+{% block content %}
+    <table style="width: 98vw; margin: 0 auto;">
+        <tr class="table-head">
+            <th>Name</th>
+            <th>Author</th>
+            <th>Category</th>
+            <th>Description</th>
+            <th>Publication year</th>
+            <th>Add to archive</th>
+        </tr>
+        
+        {% for book in books %}
+        <tr class={{ loop.cycle('even', 'odd') }}>
+            <td>{{book.name}}</td>
+            <td>{{book.author}}</td>
+            <td>{{book.category}}</td>
+            <td>{{book.describe}}</td>
+            <td>{{book.publication_year}}</td>
+            <td style="text-align: center;">
+                <!-- {{book.id}} {{user_books}} -->
+                {% if active_user_id %}
+                    {% if book.id in user_books %}
+                        <a href="/user/{{active_user_id}}/archive/book/{{book.id}}/remove">Remove</a>
+                    {% else %}
+                        <a href="/user/{{active_user_id}}/archive/book/{{book.id}}/add">Add</a>
+                    {% endif %}
+                {% else %}
+                    <a href="/login">Add</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <div class="add-book" style="margin-top: 20px; text-align: right;">
+        <a href="/books" style="margin-right: 20px;">Добавить книгу</a>
+    </div>
+{% endblock %}

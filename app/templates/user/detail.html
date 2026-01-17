@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}
+    <title>{{name}}</title>
+{% endblock %}
+
+{% block content %}
+    {% if user %}
+    <Table>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Email</th>
+        </tr>
+
+        <tr>
+            <td>{{user.id}}</td>
+            <td>{{user.name}}</td>
+            <td>{{user.email}}</td>
+        </tr>
+
+    </Table>
+
+    {% else %}
+        <h3 id="message">{{message}}</h3>
+    {% endif %}
+
+{% endblock %}

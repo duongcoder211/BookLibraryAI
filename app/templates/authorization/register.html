@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}
+    <title>Create an account</title>    
+{% endblock %}
+
+{% block content %}
+    <div class="text-center">
+        <h3>Create a new account</h3>
+        <form action="/register" method="post">
+            <label for="username">Enter your username</label><br>
+            <input type="text" name="username" id="username" required><br>
+    
+            <label for="email">Enter your email address</label><br>
+            <input type="email" name="email" id="email" required><br>
+    
+            <label for="password">Enter your password</label><br>
+            <input type="password" name="password" id="password" required><br>
+    
+            <label for="confirm-password">Confirm password</label><br>
+            <input type="password" name="confirm-password" id="confirm-password" required><br>
+            
+            <label for="rememberme">Remember me</label>
+            <input type="checkbox" name="rememberme" id="rememberme" style="vertical-align: middle;"><br>
+
+            <input type="submit" name="submit" id="submit">
+        </form>   
+    </div>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}
+    <title>Users</title>
+{% endblock %}
+
+{% block content %}
+    <Table style="width: 60vw;">
+        <tr class="table-head">
+            <th>Id</th>
+            <th>Name</th>
+            <th>Email</th>
+            <td>Actions</td>
+        </tr>
+
+        {% for i, user in users %}
+        <tr {% if i%2 != 0 %} style="background-color: rgba(163, 203, 247, 0.847);" {% endif %}>
+            <td>{{i}}</td>
+            <td>{{user.name}}</td>
+            <td>{{user.email}}</td>
+            <td style="text-align: center;">
+                {% if active_user_id == user.id%}
+                    <a href="/user/{{user.id}}/update" style="margin-right: 20px;">Edit</a><a href="/user/{{user.id}}/delete">Delete</a>
+                {% else %}
+                <!-- <a href="/user/{{user.id}}/update" style="margin-right: 20px;">Edit</a><a href="/user/{{user.id}}/delete">Delete</a> -->
+                <span style="margin-right: 20px;">Edit</span><span>Delete</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </Table>
+{% endblock %}

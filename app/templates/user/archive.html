@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}
+    <title>Book Archive</title>
+{% endblock %}
+
+{% block content %}
+    <Table style="width: 98vw; margin: 0 auto;">
+        <tr class="text-center table-head">
+            <th style="width: 30px;">Id</th>
+            <th>Book name</th>
+            <th>Author</th>
+            <th>Category</th>
+            <th>Description</th>
+            <th>Publication year</th>
+            <th>Reading status</th>
+            <th style="width: 170px;">Actions</th>
+        </tr>
+
+        {% if userbooks %}
+            {% for i, userbook in userbooks %}
+                <tr class={{ loop.cycle('even', 'odd') }}>
+                    <td>{{i}}</td>
+                    <td>{{userbook.book.name}}</td>
+                    <td>{{userbook.book.author}}</td>
+                    <td>{{userbook.book.category}}</td>
+                    <td>{{userbook.book.describe}}</td>
+                    <td>{{userbook.book.publication_year}}</td>
+                    <td>{{userbook.reading_status}}</td>
+                    <td style="text-align: center; display: flex; justify-content: space-between;">
+                        <div class="set-status">
+                            <!-- <a href="/"><button type="submit">Reading</button></a> -->
+                            <a href="/user/{{userbook.user_id}}/archive/book/{{userbook.book_id}}/status/update" style="margin-left: 10px;">{{userbook.reading_status}}</a>
+                        </div>
+                        <div>
+                            <a href="/user/{{userbook.user_id}}/archive/book/{{userbook.book_id}}/remove" style="margin-right: 10px;">Remove</a>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td></td>
+                <td style="color: rgb(241, 84, 79);">{{message}}<br><a href="/">Back to home</a></td>
+            </tr>
+        {% endif %}
+    </Table>
+{% endblock %}

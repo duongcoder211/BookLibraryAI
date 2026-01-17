@@ -1,0 +1,287 @@
+<!-- templates/base.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='imgs/Books-Library.png') }}" type="image/x-icon">
+    {% block title %}Книжный сайт{% endblock %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <h1 id="app-name" style="text-align: center;">Book Library</h1>
+    <nav class="navbar">
+        <a href="/">Главная</a>
+        <a href="/books">Books</a>
+        <a href="/users">Users</a>
+        {% if active_user_id %}
+            <a href="/users">Профиль</a>
+            <a href="/user/{{active_user_id}}/archive">Мой каталог</a>
+            <a href="/logout">Выйти</a>
+        {% else %}
+            <a href="/login">Мой каталог</a>
+            <a href="/login">Войти</a>
+            <a href="/register">Регистрация</a>
+        {% endif %}
+    </nav>
+
+    <div class="flash-messages">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert flash-message flash-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+
+    <div class="content">
+        {% block content %}{% endblock %}
+        <!-- Кнопка чат-бота -->
+        <div class="chatbot-button" id="chatbotButton">
+            <i class="fas fa-robot"></i>
+        </div>
+
+        <!-- Контейнер чат-бота -->
+        <div class="chatbot-container" id="chatbotContainer">
+            <div class="chat-header">
+                <h3><i class="fas fa-robot"></i> Чат с AI</h3>
+                <button class="close-btn" id="closeBtn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="chat-body" id="chatBody">
+                <!-- Сообщения будут добавлены сюда -->
+                <div class="message bot">
+                    <div class="message-content">
+                        Привет! Я AI ассистент. Чем я могу помочь вам сегодня?
+                    </div>
+                    <div class="message-time">10:00</div>
+                </div>
+            </div>
+
+            <div class="chat-footer">
+                <input type="text" class="chat-input" id="chatInput" placeholder="Введите ваш вопрос...">
+                <button class="send-btn" id="sendBtn">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="footer">
+        {% block footer %}{% endblock %}
+    </div>
+
+    <script>
+    // Auto-dismiss flash messages after 5 seconds
+    document.addEventListener('DOMContentLoaded', function() {
+        var alerts = document.querySelectorAll('.alert');
+        alerts.forEach(function(alert) {
+            setTimeout(function() {
+                alert.style.transition = "opacity 0.5s";
+                alert.style.opacity = "0";
+                setTimeout(function() {
+                    alert.style.display = "none";
+                }, 500); // Wait for fade out
+            }, 10000); // 10 seconds
+        });
+    });
+
+    // DOM элементы
+        const chatbotButton = document.getElementById('chatbotButton');
+        const chatbotContainer = document.getElementById('chatbotContainer');
+        const closeBtn = document.getElementById('closeBtn');
+        const chatBody = document.getElementById('chatBody');
+        const chatInput = document.getElementById('chatInput');
+        const sendBtn = document.getElementById('sendBtn');
+
+        // Переключение видимости чат-бота
+        chatbotButton.addEventListener('click', () => {
+            chatbotContainer.classList.toggle('active');
+        });
+
+        // Закрытие чат-бота
+        closeBtn.addEventListener('click', () => {
+            chatbotContainer.classList.remove('active');
+        });
+
+        // Отправка сообщения
+        async function sendMessage() {
+            const messageText = chatInput.value.trim();
+            
+            if (!messageText) return;
+            
+            // Добавляем сообщение пользователя
+            addMessage(messageText, 'user');
+            chatInput.value = '';
+            
+            // Показываем скелетон загрузки
+            addSkeletonLoading();
+            
+            // Добавляем ответ от AI
+            const aiResponse =  await getAIResponse(messageText);
+
+            addMessage(aiResponse, 'bot');
+
+            removeSkeletonLoading();
+            // Имитируем ответ от AI через некоторое время
+            // setTimeout(() => {
+            //     // Удаляем скелетон загрузки
+            //     removeSkeletonLoading();
+                
+            //     // Добавляем ответ от AI
+            //     const aiResponse = getAIResponse(messageText);
+            //     addMessage(aiResponse, 'bot');
+                
+            //     // Прокручиваем вниз
+            //     scrollToBottom();
+            // }, 1500 + Math.random() * 2000); // Случайное время ответа от 1.5 до 3.5 секунд
+        }
+
+        // Отправка сообщения при нажатии кнопки отправки
+        sendBtn.addEventListener('click', sendMessage);
+
+        // Отправка сообщения при нажатии Enter
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Добавление сообщения в чат
+        function addMessage(text, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            
+            const messageContent = document.createElement('div');
+            messageContent.className = 'message-content';
+            messageContent.textContent = text;
+            
+            const messageTime = document.createElement('div');
+            messageTime.className = 'message-time';
+            messageTime.textContent = getCurrentTime();
+            
+            messageDiv.appendChild(messageContent);
+            messageDiv.appendChild(messageTime);
+            
+            chatBody.appendChild(messageDiv);
+            
+            // Прокручиваем вниз
+            scrollToBottom();
+        }
+
+        // Добавление скелетона загрузки
+        function addSkeletonLoading() {
+            const skeletonDiv = document.createElement('div');
+            skeletonDiv.className = 'skeleton-loading';
+            skeletonDiv.id = 'skeletonLoading';
+            skeletonDiv.textContent = 'Скоро будет готов ...';
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message bot';
+            messageDiv.appendChild(skeletonDiv);
+            
+            chatBody.appendChild(messageDiv);
+            
+            // Прокручиваем вниз
+            scrollToBottom();
+        }
+
+        // Удаление скелетона загрузки
+        function removeSkeletonLoading() {
+            const skeleton = document.getElementById('skeletonLoading');
+            if (skeleton) {
+                skeleton.parentElement.remove();
+            }
+        }
+
+        // Получение текущего времени в формате ЧЧ:ММ
+        function getCurrentTime() {
+            const now = new Date();
+            return `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+        }
+
+        // Прокрутка вниз чата
+        function scrollToBottom() {
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+
+        // Получение ответа от AI на основе сообщения
+        async function getAIResponse(userMessage) {
+            const message = { message: userMessage.toLowerCase()};
+
+            try {
+                const response = await fetch('/ask', {
+                    method: 'POST', // *GET, POST, PUT, DELETE, etc.
+                    headers: {
+                        'Content-Type': 'application/json'
+                        // Additional headers can be set here
+                    },
+                    body: JSON.stringify(message) // body data type must match "Content-Type" header
+                })
+    
+                // Khi bạn dùng .then(), bạn cần return promise
+                const data = await response.json() // Parses the JSON response into a JavaScript object
+                // Прокручиваем вниз
+                scrollToBottom();
+                return data.response
+                // console.log('Success:', data); // Handle the successful response data
+            } catch (error){
+                return "Ошибка произошла, попробуйте еще раз!"
+                // console.error('Error:', error); // Handle errors during the fetch operation
+            };
+
+            // fetch('https://api.example.com/data')
+            // .then(response => response.text()) // Parse the response body as plain text
+            // .then(text => {
+            //     console.log(text); // The raw string data
+            // })
+            // .catch(error => {
+            //     console.error('Fetch error:', error);
+            // });
+
+            // const responses = [
+            //     "Я - AI, разработанный для помощи и ответов на вопросы. На основе вашего вопроса я могу предоставить более подробную информацию, если вы уточните запрос.",
+            //     "Это интересный вопрос! Я могу помочь вам узнать больше на эту тему. Хотите, чтобы я объяснил подробнее?",
+            //     "Я понимаю ваш вопрос. На основе текущих знаний я могу предоставить следующую информацию: современный AI обладает способностями обработки естественного языка, машинного обучения и поддержки в различных областях.",
+            //     "Спасибо за ваш вопрос! Позвольте мне проанализировать и дать наиболее подходящий ответ. Технологии AI быстро развиваются и имеют множество практических применений.",
+            //     "Я обработал ваш вопрос. Результаты анализа показывают, что это популярная тема. Хотите, чтобы я привел конкретные примеры или объяснил подробнее?",
+            //     "Основываясь на вашем запросе, я предлагаю несколько решений: 1) Узнать больше информации из проверенных источников, 2) Проконсультироваться со специалистами, 3) Использовать существующие инструменты поддержки AI."
+            // ];
+            
+            // Проверка ключевых слов для подходящего ответа
+            // if (message.includes("привет") || message.includes("здравствуйте") || message.includes("здравствуй")) {
+            //     return "Привет! Рад общению с вами. У вас есть вопросы, на которые я могу ответить?";
+            // } else if (message.includes("спасибо") || message.includes("благодарю")) {
+            //     return "Пожалуйста! Я всегда готов помочь. Если у вас есть дополнительные вопросы, не стесняйтесь спрашивать!";
+            // } else if (message.includes("как дела") || message.includes("как ты")) {
+            //     return "У меня все отлично, я готов помогать вам! А как ваши дела?";
+            // } else if (message.includes("что такое ии") || message.includes("что такое ai") || message.includes("искусственный интеллект")) {
+            //     return "Искусственный интеллект (ИИ) — это область компьютерных наук, которая занимается созданием систем, способных выполнять задачи, обычно требующие человеческого интеллекта, такие как распознавание изображений, обработка естественного языка и принятие решений.";
+            // } else if (message.includes("время") || message.includes("который час")) {
+            //     return `Сейчас ${getCurrentTime()}. Время ответа зависит от сложности вопроса и нагрузки на систему.`;
+            // } else if (message.includes("помощь") || message.includes("help")) {
+            //     return "Я могу помочь с различными вопросами: объяснить концепции, помочь с кодом, ответить на общие вопросы, перевести текст и многое другое. Что вас интересует?";
+            // } else if (message.includes("погода")) {
+            //     return "К сожалению, у меня нет доступа к актуальным данным о погоде. Рекомендую проверить специализированные сервисы погоды.";
+            // } else {
+            //     // Возвращаем случайный ответ из списка
+            //     return responses[Math.floor(Math.random() * responses.length)];
+            // }
+        }
+
+        // Добавление нескольких примеров сообщений при загрузке страницы
+        window.addEventListener('DOMContentLoaded', () => {
+            // Приветственное сообщение уже есть в HTML
+            // Добавляем еще одно сообщение для демонстрации
+            setTimeout(() => {
+                addMessage("Вы можете задать мне вопросы на любые темы. Я могу помочь с вопросами о технологиях, обучении или просто пообщаться!", 'bot');
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
