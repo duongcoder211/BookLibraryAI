@@ -2,7 +2,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.embeddings import Embeddings
 from langchain_chroma import Chroma
-from langchain_gigachat.chat_models import GigaChat
+from langchain_community.llms.gigachat import GigaChat
 from langchain_core.tools import tool
 from typing_extensions import List
 from dotenv import get_key

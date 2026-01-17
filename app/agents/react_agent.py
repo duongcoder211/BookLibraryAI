@@ -1,7 +1,8 @@
 import os
 from langchain_classic.agents import create_react_agent, AgentExecutor, ZeroShotAgent
 from tools import search_web_tool, append_to_file_tool, rag_query_tool
-from langchain_gigachat import GigaChat
+# from langchain_gigachat import GigaChat
+from langchain_community.llms.gigachat import GigaChat
 from langchain_core.prompts import ChatPromptTemplate, PromptTemplate
 from langchain_core.messages import SystemMessage
 from dotenv import get_key
