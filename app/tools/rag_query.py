@@ -6,6 +6,7 @@ from langchain_community.llms.gigachat import GigaChat
 from langchain_core.tools import tool
 from typing_extensions import List
 from dotenv import get_key
+import os
 from openai import OpenAI
 
 # Шаг 4.2: Создайте промпт-шаблон:
@@ -34,9 +35,10 @@ llm = GigaChat(
     verify_ssl_certs=False,
     timeout=30
 )
+# api_key=get_key('.env', "OPEN_AI_KEY"),
 
 client = OpenAI(
-    api_key=get_key('.env', "OPEN_AI_KEY"),
+    api_key=os.getenv("OPEN_AI_KEY"),
     base_url="https://foundation-models.api.cloud.ru/v1"
 )
 

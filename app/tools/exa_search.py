@@ -3,7 +3,8 @@ from dotenv import get_key
 from exa_py import Exa
 from langchain.tools import tool
 
-exa = Exa(get_key('.env', 'EXA_API_KEY'))
+# exa = Exa(get_key('.env', 'EXA_API_KEY'))
+exa = Exa(os.getenv("EXA_API_KEY"))
 
 @tool(
     "search_web_tool",

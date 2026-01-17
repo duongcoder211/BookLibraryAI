@@ -22,7 +22,7 @@ class ReActAgent:
         
         # Инициализация LLM
         self.llm = GigaChat(
-            credentials= get_key(dotenv_path='.env', key_to_get='GIGACHAT_CREDENTIALS'),
+            credentials= os.getenv('GIGACHAT_CREDENTIALS'),
             scope="GIGACHAT_API_B2B",
             model="Gigachat-2-Pro",
             verify_ssl_certs=False,
