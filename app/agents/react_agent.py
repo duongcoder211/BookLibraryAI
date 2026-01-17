@@ -123,7 +123,7 @@ class ReActAgent:
             # print(f"Agent result: {result}")
             return result.get("output", "Ответ не получен")
         except Exception as e:
-            print(f"Agent error: {e}")
+            # print(f"Agent error: {e}")
             return f"Ошибка выполнения: {str(e)}"
 
     
