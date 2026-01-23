@@ -19,7 +19,26 @@ from agents.react_agent import ReActAgent
 from tools import rag_query_tool, search_web_tool
 
 # Создание агента
-react_agent = ReActAgent()
+# react_agent = ReActAgent()
+
+from openai import OpenAI
+
+client = OpenAI(
+    base_url="https://router.huggingface.co/v1",
+    api_key=os.environ["CHAT_GPT_TOKEN"],
+)
+
+def chat_llm(ques):
+    completion = client.chat.completions.create(
+        model="openai/gpt-oss-120b:groq",
+        messages=[
+            {
+                "role": "user",
+                "content": f"{ques}"
+            }
+        ],
+    )
+    return completion.choices[0].message.content
 
 # create the app
 app = Flask(__name__)
@@ -69,7 +88,8 @@ def answer():
             question = request.get_json()["message"]
             # Пример использования
             # result = await react_agent.ask(question) // ask is not async function, so cant use await
-            result = react_agent.ask(question)
+            result = chat_llm(ques=question)
+            # result = react_agent.ask(question)
             return jsonify({"response": result})
 
 @app.route("/user/<string:name>")

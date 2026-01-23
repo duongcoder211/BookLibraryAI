@@ -27,14 +27,14 @@ class ReActAgent:
             model="Gigachat-2-Pro",
             verify_ssl_certs=False,
             timeout=30
-        )           
+        )
         
         # Инициализация инструментов
         self.tools = self._initialize_tools()
         
         # Создание агента
         self.agent_executor = self._create_agent()
-    
+
     def _initialize_tools(self):
         """Инициализация инструментов"""
         return [search_web_tool, append_to_file_tool, rag_query_tool]

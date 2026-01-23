@@ -53,7 +53,7 @@
                 </button>
             </div>
 
-            <div class="chat-body" id="chatBody">
+            <div class="chat-body" id="chatBody" markdown="1">
                 <!-- Сообщения будут добавлены сюда -->
                 <!-- <div class="message bot">
                     <div class="message-content">
@@ -76,6 +76,8 @@
         {% block footer %}{% endblock %}
     </div>
 
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script>
     // Auto-dismiss flash messages after 5 seconds
     document.addEventListener('DOMContentLoaded', function() {
@@ -159,7 +161,9 @@
             
             const messageContent = document.createElement('div');
             messageContent.className = 'message-content';
-            messageContent.textContent = text;
+            // messageContent.textContent = text;
+            // messageContent.textContent = marked.parse(`${text}`); // <p>The sum of 1 + 1 is <strong>2</strong>.</p>
+            messageContent.innerHTML = marked.parse(`${text}`);
             
             const messageTime = document.createElement('div');
             messageTime.className = 'message-time';
